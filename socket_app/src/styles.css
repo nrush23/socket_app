@@ -6,6 +6,10 @@ body {
   font-family: sans-serif;
   margin: 20px;
   padding: 0;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 h1 {
@@ -46,45 +50,23 @@ ul {
   padding-inline-start: 20px;
 }
 
-* {
-  box-sizing: border-box;
+.popup-content {
+  margin: auto;
+  background: rgb(255, 255, 255);
+  width: 50%;
+  padding: 5px;
+}
+.popup-arrow {
+  color: rgb(255, 255, 255);
+}
+[role='tooltip'].popup-content {
+  width: 200px;
+  box-shadow: rgba(0, 0, 0, 0.16) 0px 0px 3px;
 }
 
-body {
-  font-family: sans-serif;
-  margin: 20px;
-  padding: 0;
+.popup-overlay {
+  background: rgba(0, 0, 0, 0.5);
 }
-
-.square {
-  background: #fff;
-  border: 1px solid #999;
-  float: left;
-  font-size: 24px;
-  font-weight: bold;
-  line-height: 34px;
-  height: 34px;
-  margin-right: -1px;
-  margin-top: -1px;
-  padding: 0;
-  text-align: center;
-  width: 34px;
-}
-
-.board-row:after {
-  clear: both;
-  content: '';
-  display: table;
-}
-
-.status {
-  margin-bottom: 10px;
-}
-.game {
-  display: flex;
-  flex-direction: row;
-}
-
-.game-info {
-  margin-left: 20px;
+[data-popup='tooltip'].popup-overlay {
+  background: transparent;
 }
