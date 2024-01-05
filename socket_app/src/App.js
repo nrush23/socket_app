@@ -4,17 +4,25 @@ import Popup from "reactjs-popup";
 
 export default function GUI() {
 
-  const [chat_log, setData] = useState(null);
+  const [chat_debug, setChatDebug] = useState(null);
   const [userName, setName] = useState(null);
   const [userId, setID] = useState(null);
   const [chatroom, setRoom] = useState(null);
+  const [chat_log, setLog] = useState(new Map());
 
   useEffect(() => {
-    fetch("/api").then((res) => res.json()).then((data) => setData(data.message));
+    fetch("/api").then((res) => res.json()).then((data) => receiveMessage(data));
     fetch("/getID").then((res) => res.json()).then((data) => {
       setID(data.message);
     });
   }, []);
+
+  function receiveMessage(data) {
+    const newMessages = new Map(chat_log);
+    newMessages.set(data.timestamp, data.message);
+    setLog(newMessages);
+    // console.log(newMessages);
+  }
 
   function setUserName() {
     const name = document.getElementById("username_text").value;
@@ -30,7 +38,8 @@ export default function GUI() {
         userName: name,
       }),
     }).then((res) => res.json()).then((data) => {
-      setData(data.message);
+      receiveMessage(data);
+      setChatDebug(data.message);
     });
   }
 
@@ -49,14 +58,18 @@ export default function GUI() {
         roomName: name,
       })
     }).then((res) => res.json()).then((data) => {
-      setData(data.message);
+      setChatDebug(data.message);
     });
   }
 
   return (
     <>
       <div id="chat_display">
-        <p id="chat_log">{!chat_log ? "Waiting for Server response" : chat_log}</p>
+        {
+          Array.from(chat_log.entries()).map(([timestamp, message]) => {
+            return <p key={timestamp}>{message}</p>
+          })
+        }
       </div>
       <div id="button_bar">
         <Popup trigger={<button id="set_user">Set User Name</button>}>
