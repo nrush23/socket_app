@@ -4,7 +4,6 @@ import Popup from "reactjs-popup";
 
 export default function GUI() {
 
-  const [chat_debug, setChatDebug] = useState(null);
   const [userName, setName] = useState(null);
   const [userId, setID] = useState(null);
   const [chatroom, setRoom] = useState(null);
@@ -27,43 +26,56 @@ export default function GUI() {
   function setUserName() {
     const name = document.getElementById("username_text").value;
     console.log(name);
-    setName(name);
-    fetch("/createUser", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json; charset=UTF-8"
-      },
-      body: JSON.stringify({
-        userId: userId,
-        userName: name,
-      }),
-    }).then((res) => res.json()).then((data) => {
-      receiveMessage(data);
-      setChatDebug(data.message);
-    });
+    if (name != null && name != '') {
+      // setName(name);
+      fetch("/createUser", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        },
+        body: JSON.stringify({
+          userId: userId,
+          userName: name,
+        }),
+      }).then((res) => res.json()).then((data) => {
+        if(data.userName != null){
+          setName(data.userName);
+        }
+        receiveMessage(data);
+        // setChatDebug(data.message);
+      });
+    }
   }
 
   function setChatroom() {
     const name = document.getElementById("chatroom_name").value;
-    console.log("Chatroom: " + name);
-    setChatroom(name);
+    if (name != null && name!='') {
+      console.log("Chatroom: " + name);
+      // setRoom(name);
 
-    fetch("/createRoom", {
-      method: "POST",
-      headers: {
-        "Content-type": "application/json; charset=UTF-8"
-      },
-      body: JSON.stringify({
-        userId: userId,
-        roomName: name,
-      })
-    }).then((res) => res.json()).then((data) => {
-      setChatDebug(data.message);
-    });
+      fetch("/createRoom", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        },
+        body: JSON.stringify({
+          userId: userId,
+          oldRoom: chatroom,
+          newRoom: name,
+        })
+      }).then((res) => res.json()).then((data) => {
+        // setChatDebug(data.message);
+        if (data.newRoom != -1) {
+          setRoom(data.newRoom);
+        }
+        receiveMessage(data);
+      });
+    }
   }
 
   return (
     <>
+      <p>Chatroom is: {chatroom}</p>
       <div id="chat_display">
         {
           Array.from(chat_log.entries()).map(([timestamp, message]) => {
