@@ -8,6 +8,7 @@ export default function GUI() {
   const [userId, setID] = useState(null);
   const [chatroom, setRoom] = useState(null);
   const [chat_log, setLog] = useState(new Map());
+  const socket = new WebSocket('ws://localhost:3001');
 
   useEffect(() => {
     fetch("/api").then((res) => res.json()).then((data) => receiveMessage(data));

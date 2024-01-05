@@ -1,9 +1,14 @@
 const express = require("express");
+const http = require('http');
+const WebSocket = require('ws');
 
 const PORT = process.env.PORT || 3001;
 
 const app = express();
 app.use(express.json());
+
+const server = http.createServer(app);
+const wss = new WebSocket.Server({server});
 
 let users = new Map();
 let chatrooms = new Map();
@@ -43,6 +48,14 @@ function displayValues(iterable){
     const array = [iterable];
     return array.toString();
 }
+
+function broadcastMessage(message){
+
+}
+
+wss.on('connection', (ws) =>{
+    console.log('new connection');
+});
 
 app.get("/api", (req, res) => {
     res.json({
@@ -130,7 +143,7 @@ app.post("/sendMessage", (req, res) => {
     const room = req.body.room;
     const userId = req.body.userId;
     const timestamp = req.body.timestamp;
-    
+
     for(let user of chatrooms.get(room).keys()){
         console.log("Sending message to " + user);
     }
@@ -142,6 +155,6 @@ app.post("/sendMessage", (req, res) => {
 });
 
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);
 });
