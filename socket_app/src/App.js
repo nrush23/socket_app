@@ -16,11 +16,37 @@ export default function GUI() {
     });
   }, []);
 
+  function validText(text){
+    if(text != null && text != ''){
+      return true;
+    }
+    return false;
+  }
+
+  function sendMessage(){
+    const message = document.getElementById("message_box").value;
+    if(validText(message)){
+      fetch("/sendMessage", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        },
+        body: JSON.stringify({
+          timestamp: Date.now(),
+          userId: userId,
+          room: chatroom,
+          message: message,
+        }),
+      }).then((res) => res.json()).then((data) =>{
+        receiveMessage(data);
+      });
+    }
+  }
+
   function receiveMessage(data) {
     const newMessages = new Map(chat_log);
     newMessages.set(data.timestamp, data.message);
     setLog(newMessages);
-    // console.log(newMessages);
   }
 
   function setUserName() {
@@ -69,9 +95,9 @@ export default function GUI() {
     }
   }
 
-  function joinChatroom(){
+  function joinChatroom() {
     const name = document.getElementById("join_room").value;
-    if(name != null && name != ''){
+    if (name != null && name != '') {
       console.log("Join room: " + name + " being requested...");
       fetch("/joinRoom", {
         method: "POST",
@@ -84,7 +110,7 @@ export default function GUI() {
           newRoom: name,
         })
       }).then((res) => res.json()).then((data) => {
-        if (data.newRoom != null){
+        if (data.newRoom != null) {
           setRoom(data.newRoom);
           console.log("Join room: " + name + " accepted.");
         }
@@ -158,10 +184,10 @@ export default function GUI() {
         <p>Username is: {userName}</p>
         <label>
           Write message below:
-          <textarea name="input_text" rows={8} cols={100}></textarea>
+          <textarea id="message_box" rows={8} cols={100}></textarea>
         </label>
       </div>
-      <button id="submit">Send</button>
+      <button onClick={sendMessage}>Send</button>
     </>
   );
 }

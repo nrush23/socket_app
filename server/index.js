@@ -33,6 +33,7 @@ function switchRoom(userId, oldRoom, newRoom) {
             console.log("Chatroom " + oldRoom + " was deleted.");
         } else {
             // console.log("Chatroom " + oldRoom + " after deleting " + userId + ": " + [chatrooms.get(oldRoom).keys()]);
+            console.log("Chatroom " + oldRoom + " after deleting " + userId + ": " + displayValues(chatrooms.get(oldRoom).keys()));
         }
     }
     chatrooms.get(newRoom).set(userId, users.get(userId));
@@ -123,6 +124,21 @@ app.post("/joinRoom", (req, res) => {
             message: server_name + ": " + newRoom + " does not exist, try again."
         });
     }
+});
+
+app.post("/sendMessage", (req, res) => {
+    const room = req.body.room;
+    const userId = req.body.userId;
+    const timestamp = req.body.timestamp;
+    
+    for(let user of chatrooms.get(room).keys()){
+        console.log("Sending message to " + user);
+    }
+
+    res.json({
+        timestamp: timestamp,
+        message: users.get(userId) + ": " + req.body.message
+    })
 });
 
 
