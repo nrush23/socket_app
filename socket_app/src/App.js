@@ -25,9 +25,7 @@ export default function GUI() {
 
   function setUserName() {
     const name = document.getElementById("username_text").value;
-    console.log(name);
     if (name != null && name != '') {
-      // setName(name);
       fetch("/createUser", {
         method: "POST",
         headers: {
@@ -38,21 +36,19 @@ export default function GUI() {
           userName: name,
         }),
       }).then((res) => res.json()).then((data) => {
-        if(data.userName != null){
+        if (data.userName != null) {
           setName(data.userName);
+          console.log("Changed name to: " + data.userName);
         }
         receiveMessage(data);
-        // setChatDebug(data.message);
       });
     }
   }
 
-  function setChatroom() {
-    const name = document.getElementById("chatroom_name").value;
-    if (name != null && name!='') {
-      console.log("Chatroom: " + name);
-      // setRoom(name);
-
+  function createChatroom() {
+    const name = document.getElementById("create_room").value;
+    if (name != null && name != '') {
+      console.log("Chatroom: " + name + " being requested...");
       fetch("/createRoom", {
         method: "POST",
         headers: {
@@ -64,9 +60,33 @@ export default function GUI() {
           newRoom: name,
         })
       }).then((res) => res.json()).then((data) => {
-        // setChatDebug(data.message);
         if (data.newRoom != -1) {
           setRoom(data.newRoom);
+          console.log("Chatroom: " + name + " accepted.");
+        }
+        receiveMessage(data);
+      });
+    }
+  }
+
+  function joinChatroom(){
+    const name = document.getElementById("join_room").value;
+    if(name != null && name != ''){
+      console.log("Join room: " + name + " being requested...");
+      fetch("/joinRoom", {
+        method: "POST",
+        headers: {
+          "Content-type": "application/json; charset=UTF-8"
+        },
+        body: JSON.stringify({
+          userId: userId,
+          oldRoom: chatroom,
+          newRoom: name,
+        })
+      }).then((res) => res.json()).then((data) => {
+        if (data.newRoom != null){
+          setRoom(data.newRoom);
+          console.log("Join room: " + name + " accepted.");
         }
         receiveMessage(data);
       });
@@ -104,10 +124,10 @@ export default function GUI() {
           <div>
             <label>
               Enter your Room name:
-              <textarea id="chatroom_name" rows={1} cols={23}></textarea>
+              <textarea id="create_room" rows={1} cols={23}></textarea>
             </label>
             <div>
-              <button onClick={setChatroom}>
+              <button onClick={createChatroom}>
                 Save
               </button>
               <button>
@@ -116,9 +136,22 @@ export default function GUI() {
             </div>
           </div>
         </Popup>
-        <button>
-          Join Chatroom
-        </button>
+        <Popup trigger={<button>Join Chatroom</button>}>
+          <div>
+            <label>
+              Enter your Room name:
+              <textarea id="join_room" rows={1} cols={23}></textarea>
+            </label>
+            <div>
+              <button onClick={joinChatroom}>
+                Save
+              </button>
+              <button>
+                Cancel
+              </button>
+            </div>
+          </div>
+        </Popup>
       </div>
       <div id="input_field">
         <p>ID is: {userId}</p>

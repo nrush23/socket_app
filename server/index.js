@@ -12,7 +12,7 @@ let server_name = "Lord Boof Boof";
 //Function to check if a username is valid (currently checks only if it's taken)
 //Returns false if invalid or true if valid
 function validName(name, usernames) {
-    console.log(usernames);
+    console.log("Checking "+ [usernames] + " for " + name);
     for (let username of usernames) {
         if (username == name) {
             return false;
@@ -25,14 +25,22 @@ function validName(name, usernames) {
 //given that the newRoom exists and the username is not taken
 function switchRoom(userId, oldRoom, newRoom) {
     if (oldRoom != null) {
-        console.log(oldRoom + " before deleting " + userId + ": " + chatrooms.get(oldRoom).keys);
+        // console.log(oldRoom + " before deleting " + userId + ": " + [chatrooms.get(oldRoom).keys()]);
+        console.log(oldRoom + " before deleting " + userId + ": " + displayValues(chatrooms.get(oldRoom).keys()));
         chatrooms.get(oldRoom).delete(userId);
         if (chatrooms.get(oldRoom).size == 0) {
             chatrooms.delete(oldRoom);
+            console.log("Chatroom " + oldRoom + " was deleted.");
+        } else {
+            // console.log("Chatroom " + oldRoom + " after deleting " + userId + ": " + [chatrooms.get(oldRoom).keys()]);
         }
-        console.log(oldRoom + " after deleting " + userId + ": " + chatrooms.get(oldRoom).keys);
     }
     chatrooms.get(newRoom).set(userId, users.get(userId));
+}
+
+function displayValues(iterable){
+    const array = [iterable];
+    return array.toString();
 }
 
 app.get("/api", (req, res) => {
@@ -79,16 +87,6 @@ app.post("/createRoom", (req, res) => {
     } else {
         chatrooms.set(newRoom, new Map());
         switchRoom(req.body.userId, oldRoom, newRoom);
-        // if (oldRoom != null) {
-        //     // chatrooms.delete(key);
-        //     console.log("Room before deleting user: " + chatrooms.get(oldRoom));
-        //     chatrooms.get(oldRoom).delete(req.body.userId);
-        //     if (chatrooms.get(oldRoom).size == 0) {
-        //         chatrooms.delete(oldRoom);
-        //     }
-        //     console.log("Room after deleting user: " + chatrooms.get(oldRoom));
-        // }
-        // chatrooms.set(newRoom, new Map().set(req.body.userId, users.get(req.body.userId)));
         res.json({
             timestamp: Date.now(),
             newRoom: newRoom,
@@ -111,7 +109,7 @@ app.post("/joinRoom", (req, res) => {
                 newRoom: newRoom,
                 message: server_name + ": Welcome " + userName + " to " + newRoom + "!"
             })
-        }else{
+        } else {
             res.json({
                 timestamp: Date.now(),
                 newRoom: null,
@@ -122,7 +120,7 @@ app.post("/joinRoom", (req, res) => {
         res.json({
             timestamp: Date.now(),
             newRoom: null,
-            message: server_name + ": " + newRoom+ " does not exist, try again."
+            message: server_name + ": " + newRoom + " does not exist, try again."
         });
     }
 });
