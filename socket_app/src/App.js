@@ -55,38 +55,23 @@ export default function GUI() {
 
   function sendMessage() {
     const message = document.getElementById("message_box").value;
-    if(validText(message)){
+    if(validText(message) && chatroom != null){
       socket.send(JSON.stringify({
         type: "sendMessage",
+        timestamp: Date.now(),
         userId: userId,
         room: chatroom,
         message: message
       }));
+      document.getElementById("message_box").value = '';
     }
   }
-  // function sendMessage() {
-  //   const message = document.getElementById("message_box").value;
-  //   if (validText(message)) {
-  //     fetch("/sendMessage", {
-  //       method: "POST",
-  //       headers: {
-  //         "Content-type": "application/json; charset=UTF-8"
-  //       },
-  //       body: JSON.stringify({
-  //         timestamp: Date.now(),
-  //         userId: userId,
-  //         room: chatroom,
-  //         message: message,
-  //       }),
-  //     }).then((res) => res.json()).then((data) => {
-  //       receiveMessage(data);
-  //     });
-  //   }
-  // }
 
   function receiveMessage(data) {
+    console.log(Array.from(chat_log.values()));
     const newMessages = new Map(chat_log);
     newMessages.set(data.timestamp, data.message);
+    console.log(Array.from(newMessages.values()));
     setLog(newMessages);
   }
 

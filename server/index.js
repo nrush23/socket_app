@@ -20,7 +20,7 @@ let server_name = "Lord Boof Boof";
 //Function to check if a username is valid (currently checks only if it's taken)
 //Returns false if invalid or true if valid
 function validName(name, userIds) {
-    console.log("Checking " + [userIds] + " for " + name);
+    console.log("Checking " + displayValues(userIds) + " for " + name);
     for (let user of userIds) {
         if (usernames.get(user) == name) {
             return false;
@@ -33,27 +33,27 @@ function validName(name, userIds) {
 //given that the newRoom exists and the username is not taken
 function switchRoom(userId, oldRoom, newRoom) {
     if (oldRoom != null) {
-        // console.log(oldRoom + " before deleting " + userId + ": " + [chatrooms.get(oldRoom).keys()]);
+        console.log(newRoom + " before joining: " + displayValues(chatrooms.get(newRoom).keys()));
         console.log(oldRoom + " before deleting " + userId + ": " + displayValues(chatrooms.get(oldRoom).keys()));
         chatrooms.get(oldRoom).delete(userId);
         if (chatrooms.get(oldRoom).size == 0) {
             chatrooms.delete(oldRoom);
             console.log("Chatroom " + oldRoom + " was deleted.");
         } else {
-            // console.log("Chatroom " + oldRoom + " after deleting " + userId + ": " + [chatrooms.get(oldRoom).keys()]);
             console.log("Chatroom " + oldRoom + " after deleting " + userId + ": " + displayValues(chatrooms.get(oldRoom).keys()));
         }
     }
     chatrooms.get(newRoom).set(userId, users.get(userId));
+    console.log(newRoom + " after joining: " + displayValues(chatrooms.get(newRoom).keys()));
 }
 
 function displayValues(iterable) {
-    const array = [iterable];
+    const array = Array.from(iterable);
     return array.toString();
 }
 
 wss.on('connection', function connection(ws) {
-
+    
     ws.on('error', console.error);
 
     ws.on('close', function close(data) {
@@ -149,11 +149,11 @@ wss.on('connection', function connection(ws) {
             case "sendMessage":
                 const room = msg.room;
                 const user_Id = msg.userId;
-                const timestamp = msg.timestamp;
 
-                for(let wsc of chatrooms.get(room).values()){
-                    wsc.send(JSON.stringify({
-                        timestamp: timestamp,
+                console.log("Sending message to: " + displayValues(chatrooms.get(room).keys()));
+                for(let user of chatrooms.get(room).keys()){
+                    users.get(user).send(JSON.stringify({
+                        timestamp: msg.timestamp,
                         message: usernames.get(user_Id) + ": " + msg.message
                     }));
                 }
