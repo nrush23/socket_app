@@ -4,45 +4,85 @@ import Popup from "reactjs-popup";
 
 export default function GUI() {
 
-  const [userName, setName] = useState(null);
+  const [username, setName] = useState(null);
   const [userId, setID] = useState(null);
   const [chatroom, setRoom] = useState(null);
   const [chat_log, setLog] = useState(new Map());
   const socket = new WebSocket('ws://localhost:3001');
 
+  socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+
+    switch (data.type) {
+      case "getID":
+        setID(data.message);
+        return;
+      case "createUser":
+        setName(data.userName);
+        break;
+      case "createRoom":
+        setRoom(data.newRoom);
+        console.log("Chatroom " + data.newRoom + " accepted.");
+        break;
+      case "joinRoom":
+        setRoom(data.newRoom);
+        console.log("Joined " + data.newRoom);
+      default:
+        break;
+    }
+    receiveMessage(data);
+  };
+
   useEffect(() => {
-    fetch("/api").then((res) => res.json()).then((data) => receiveMessage(data));
-    fetch("/getID").then((res) => res.json()).then((data) => {
-      setID(data.message);
-    });
+    socket.onopen = (event) => {
+      socket.send(JSON.stringify({
+        type: "api",
+        timestamp: Date.now()
+      }));
+      socket.send(JSON.stringify({
+        type: "getID",
+        timestamp: Date.now()
+      }));
+    }
   }, []);
 
-  function validText(text){
-    if(text != null && text != ''){
+  function validText(text) {
+    if (text != null && text != '') {
       return true;
     }
     return false;
   }
 
-  function sendMessage(){
+  function sendMessage() {
     const message = document.getElementById("message_box").value;
     if(validText(message)){
-      fetch("/sendMessage", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json; charset=UTF-8"
-        },
-        body: JSON.stringify({
-          timestamp: Date.now(),
-          userId: userId,
-          room: chatroom,
-          message: message,
-        }),
-      }).then((res) => res.json()).then((data) =>{
-        receiveMessage(data);
-      });
+      socket.send(JSON.stringify({
+        type: "sendMessage",
+        userId: userId,
+        room: chatroom,
+        message: message
+      }));
     }
   }
+  // function sendMessage() {
+  //   const message = document.getElementById("message_box").value;
+  //   if (validText(message)) {
+  //     fetch("/sendMessage", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-type": "application/json; charset=UTF-8"
+  //       },
+  //       body: JSON.stringify({
+  //         timestamp: Date.now(),
+  //         userId: userId,
+  //         room: chatroom,
+  //         message: message,
+  //       }),
+  //     }).then((res) => res.json()).then((data) => {
+  //       receiveMessage(data);
+  //     });
+  //   }
+  // }
 
   function receiveMessage(data) {
     const newMessages = new Map(chat_log);
@@ -50,75 +90,42 @@ export default function GUI() {
     setLog(newMessages);
   }
 
-  function setUserName() {
+  function setUsername() {
     const name = document.getElementById("username_text").value;
-    if (name != null && name != '') {
-      fetch("/createUser", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json; charset=UTF-8"
-        },
-        body: JSON.stringify({
-          userId: userId,
-          userName: name,
-        }),
-      }).then((res) => res.json()).then((data) => {
-        if (data.userName != null) {
-          setName(data.userName);
-          console.log("Changed name to: " + data.userName);
-        }
-        receiveMessage(data);
-      });
+    if (validText(name)) {
+      socket.send(JSON.stringify({
+        type: "createUser",
+        userId: userId,
+        username: name
+      }));
     }
   }
 
   function createChatroom() {
     const name = document.getElementById("create_room").value;
-    if (name != null && name != '') {
+    if (validText(name)) {
       console.log("Chatroom: " + name + " being requested...");
-      fetch("/createRoom", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json; charset=UTF-8"
-        },
-        body: JSON.stringify({
-          userId: userId,
-          oldRoom: chatroom,
-          newRoom: name,
-        })
-      }).then((res) => res.json()).then((data) => {
-        if (data.newRoom != -1) {
-          setRoom(data.newRoom);
-          console.log("Chatroom: " + name + " accepted.");
-        }
-        receiveMessage(data);
-      });
+      socket.send(JSON.stringify({
+        type: "createRoom",
+        userId: userId,
+        oldRoom: chatroom,
+        newRoom: name,
+      }));
     }
   }
 
   function joinChatroom() {
     const name = document.getElementById("join_room").value;
-    if (name != null && name != '') {
-      console.log("Join room: " + name + " being requested...");
-      fetch("/joinRoom", {
-        method: "POST",
-        headers: {
-          "Content-type": "application/json; charset=UTF-8"
-        },
-        body: JSON.stringify({
-          userId: userId,
-          oldRoom: chatroom,
-          newRoom: name,
-        })
-      }).then((res) => res.json()).then((data) => {
-        if (data.newRoom != null) {
-          setRoom(data.newRoom);
-          console.log("Join room: " + name + " accepted.");
-        }
-        receiveMessage(data);
-      });
+    if (validText(name)) {
+      socket.send(JSON.stringify({
+        type: "joinRoom",
+        userId: userId,
+        oldRoom: chatroom,
+        newRoom: name
+      }));
     }
   }
+
 
   return (
     <>
@@ -138,7 +145,7 @@ export default function GUI() {
               <textarea id="username_text" rows={1} cols={23}></textarea>
             </label>
             <div>
-              <button onClick={setUserName}>
+              <button onClick={setUsername}>
                 Save
               </button>
               <button>
@@ -182,7 +189,7 @@ export default function GUI() {
       </div>
       <div id="input_field">
         <p>ID is: {userId}</p>
-        <p>Username is: {userName}</p>
+        <p>Username is: {username}</p>
         <label>
           Write message below:
           <textarea id="message_box" rows={8} cols={100}></textarea>
@@ -192,3 +199,4 @@ export default function GUI() {
     </>
   );
 }
+
