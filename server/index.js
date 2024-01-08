@@ -1,5 +1,6 @@
 const { create } = require("domain");
 const express = require("express");
+const cors = require('cors');
 const http = require('http');
 const WebSocket = require('ws');
 
@@ -7,6 +8,13 @@ const PORT = process.env.PORT || 3001;
 
 const app = express();
 app.use(express.json());
+
+
+let corsOptions = {
+    origin: ['*'],
+}
+
+app.use(cors(corsOptions));
 
 const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
@@ -19,10 +27,10 @@ let server_name = "Lord Boof Boof";
 
 //Function to check if a username is valid (currently checks only if it's taken)
 //Returns false if invalid or true if valid
-function validName(name, userIds) {
-    console.log("Checking " + displayValues(userIds) + " for " + name);
-    for (let user of userIds) {
-        if (usernames.get(user) == name) {
+function validName(name, usernames_map) {
+    console.log("Checking " + displayValues(usernames_map) + " for " + name);
+    for (let value of usernames_map.values()){
+        if(name === value){
             return false;
         }
     }
@@ -53,7 +61,7 @@ function displayValues(iterable) {
 }
 
 wss.on('connection', function connection(ws) {
-    
+
     ws.on('error', console.error);
 
     ws.on('close', function close(data) {
@@ -74,7 +82,7 @@ wss.on('connection', function connection(ws) {
                 }));
                 break;
             case "getID":
-                usernames.set(usernames.size, '');
+                usernames.set(usernames.size, "");
                 sockets.set(ws, sockets.size);
                 users.set(users.size, ws);
                 ws.send(JSON.stringify({
@@ -84,13 +92,15 @@ wss.on('connection', function connection(ws) {
                 break;
             case "createUser":
                 const newName = msg.username;
-                if (!validName(newName, users.keys())) {
+                console.log("Users right now is: " + displayValues(users.keys()));
+                if (!validName(newName, usernames)) {
                     ws.send(JSON.stringify({
                         timestamp: Date.now(),
                         message: server_name + ": Name already taken, try again."
                     }));
                 } else {
                     usernames.set(msg.userId, newName);
+                    console.log("Usernames is: " + displayValues(usernames.values()));
                     ws.send(JSON.stringify({
                         type: msg.type,
                         timestamp: Date.now(),
@@ -125,7 +135,7 @@ wss.on('connection', function connection(ws) {
                 const userName = usernames.get(userId);
 
                 if (chatrooms.has(newRoom)) {
-                    if (validName(userName, chatrooms.get(newRoom).keys())) {
+                    if (validName(userName, chatrooms.get(newRoom))) {
                         switchRoom(userId, oldRoom, newRoom);
                         ws.send(JSON.stringify({
                             type: msg.type,
@@ -150,12 +160,13 @@ wss.on('connection', function connection(ws) {
                 const room = msg.room;
                 const user_Id = msg.userId;
 
-                console.log("Sending message to: " + displayValues(chatrooms.get(room).keys()));
-                for(let user of chatrooms.get(room).keys()){
-                    users.get(user).send(JSON.stringify({
+                console.log("Messages sending to: " + displayValues(chatrooms.get(room).keys()));
+                for (let socket of chatrooms.get(room).values()) {
+                    socket.send(JSON.stringify({
                         timestamp: msg.timestamp,
                         message: usernames.get(user_Id) + ": " + msg.message
                     }));
+                    console.log("Sent to: " + sockets.get(socket));
                 }
                 break;
             default:

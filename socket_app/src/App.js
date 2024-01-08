@@ -8,7 +8,8 @@ export default function GUI() {
   const [userId, setID] = useState(null);
   const [chatroom, setRoom] = useState(null);
   const [chat_log, setLog] = useState(new Map());
-  const socket = new WebSocket('ws://localhost:3001');
+
+  const [socket, setSocket] = useState(new WebSocket('ws://192.168.0.31:3001'));
 
   socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
