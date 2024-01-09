@@ -115,13 +115,13 @@ wss.on('connection', function connection(ws) {
                         message: server_name + ": Name already taken, try again."
                     }));
                 } else {
-                    usernames.set(msg.userId, newName);     //Otherwise, name is valid and we can change their username
+                    usernames.set(sockets.get(ws), newName);     //Otherwise, name is valid and we can change their username
                     console.log("Usernames is: " + displayValues(usernames.values()));
                     ws.send(JSON.stringify({        //Send the client back the acceptable name plus a welcome username message
                         type: msg.type,
                         timestamp: Date.now(),
                         userName: newName,
-                        message: server_name + ": Welcome " + usernames.get(msg.userId) + " to the Chatroom!"
+                        message: server_name + ": Welcome " + usernames.get(sockets.get(ws)) + " to the Chatroom!"
                     }));
                 }
                 break;
@@ -135,7 +135,7 @@ wss.on('connection', function connection(ws) {
                     }));
                 } else {                        //Otherwise, the room can be created and the user switched into it
                     chatrooms.set(new_room, new Map());
-                    switchRoom(msg.userId, old_room, new_room);
+                    switchRoom(sockets.get(ws), old_room, new_room);
                     ws.send(JSON.stringify({    //Send the client back the acceptable room and chatlog that it was created
                         type: msg.type,
                         timestamp: Date.now(),
@@ -147,7 +147,7 @@ wss.on('connection', function connection(ws) {
             case "joinRoom":                //Called by the client when they want to join a room
                 const newRoom = msg.newRoom;
                 const oldRoom = msg.oldRoom;
-                const userId = msg.userId;
+                const userId = sockets.get(ws);
                 const userName = usernames.get(userId);
 
                 if (chatrooms.has(newRoom)) {   //Check if the room exists
@@ -174,7 +174,7 @@ wss.on('connection', function connection(ws) {
                 break;
             case "sendMessage":                 //Called when the user wants to send a message
                 const room = msg.room;
-                const user_Id = msg.userId;
+                const user_Id = sockets.get(ws);
 
                 console.log("Messages sending to: " + displayValues(chatrooms.get(room).keys()));
                 for (let socket of chatrooms.get(room).values()) {  //Use the chatrooms map to get the sockets inside that room

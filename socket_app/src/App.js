@@ -60,7 +60,6 @@ export default function GUI() {
       socket.send(JSON.stringify({
         type: "sendMessage",
         timestamp: Date.now(),
-        userId: userId,
         room: chatroom,
         message: message
       }));
@@ -81,7 +80,6 @@ export default function GUI() {
     if (validText(name)) {
       socket.send(JSON.stringify({
         type: "createUser",
-        userId: userId,
         username: name
       }));
     }
@@ -93,7 +91,6 @@ export default function GUI() {
       console.log("Chatroom: " + name + " being requested...");
       socket.send(JSON.stringify({
         type: "createRoom",
-        userId: userId,
         oldRoom: chatroom,
         newRoom: name,
       }));
@@ -105,7 +102,6 @@ export default function GUI() {
     if (validText(name)) {
       socket.send(JSON.stringify({
         type: "joinRoom",
-        userId: userId,
         oldRoom: chatroom,
         newRoom: name
       }));
