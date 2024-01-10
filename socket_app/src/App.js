@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Popup from "reactjs-popup";
 
 
@@ -11,15 +11,17 @@ export default function GUI() {
 
   const [socket, setSocket] = useState(new WebSocket('ws://192.168.0.31:3001'));    //The actual socket connected to the server
 
+  const chat_display = useRef(null);
+
   socket.onmessage = (event) => {     //Define the actions the socket should take when it receives a message
     const data = JSON.parse(event.data);
-
+    console.log(data);
     switch (data.type) {    //Switch statement to handle the different message types
       case "getID":         //getID returns the unique Id of the client
         setID(data.message);  //We return from the function here because getID has no chatlog
         return;
       case "createUser":    //createUser returns the new username of the client when the server accepts the change
-        setName(data.userName);
+        setName(data.newName);
         break;
       case "createRoom":    //createRoom returns the new room if the server accepts the room creation
         setRoom(data.newRoom);
@@ -28,6 +30,7 @@ export default function GUI() {
       case "joinRoom":      //joinRoom returns the new room if the server accepts the client's addition
         setRoom(data.newRoom);
         console.log("Joined " + data.newRoom);
+        return;
       default:
         break;
     }
@@ -47,6 +50,12 @@ export default function GUI() {
     }
   }, []);
 
+  useEffect(() => {     //Updates the app so that when a new chat is received the log displays from the bottom instead of the top
+    if (chat_display.current != null) {
+      chat_display.current.scrollTop = chat_display.current.scrollHeight;
+    }
+  });
+
   function validText(text) {    //Function to check if the user input is safe
     if (text != null && text != '') {
       return true;
@@ -56,7 +65,7 @@ export default function GUI() {
 
   function sendMessage() {    //Function to send the message in the chatbox to the server
     const message = document.getElementById("message_box").value;
-    if(validText(message) && chatroom != null){
+    if (validText(message) && chatroom != null) {
       socket.send(JSON.stringify({
         type: "sendMessage",
         timestamp: Date.now(),
@@ -70,7 +79,7 @@ export default function GUI() {
   function receiveMessage(data) {     //Function to parse the message from the server by adding it to the chatlog based on its timestamp
     console.log(Array.from(chat_log.values()));
     const newMessages = new Map(chat_log);
-    newMessages.set(data.timestamp, data.message);
+    newMessages.set(data.timestamp, data);
     console.log(Array.from(newMessages.values()));
     setLog(newMessages);
   }
@@ -108,18 +117,24 @@ export default function GUI() {
     }
   }
 
-/* CODE TO CREATE THE REACT HTML */
+  /* CODE TO CREATE THE REACT HTML */
   return (
     <>
-      <p>Chatroom is: {chatroom}</p>
-      <div id="chat_display">
+      <p className="room_display">{chatroom == null ? "Lobby" : "Chatroom is: " + chatroom}</p>
+      <div id="chat_display" className="chat_display" ref={chat_display}>
         {
-          Array.from(chat_log.entries()).map(([timestamp, message]) => {
-            return <p key={timestamp}>{message}</p>
+          Array.from(chat_log.entries()).map(([timestamp, data]) => {
+            if (data.username === username) {
+              return <p className="user" key={timestamp}><span>{data.message}</span></p>
+            } else if (data.username === "server") {
+              return <p className="server" key={timestamp}><span>{data.message}</span></p>
+            } else {
+              return <p className="other" key={timestamp}><span>{data.message}</span></p>
+            }
           })
         }
       </div>
-      <div id="button_bar">
+      <div className="button_bar">
         <Popup trigger={<button id="set_user">Set User Name</button>}>
           <div>
             <label>
@@ -169,12 +184,11 @@ export default function GUI() {
           </div>
         </Popup>
       </div>
-      <div id="input_field">
-        <p>ID is: {userId}</p>
-        <p>Username is: {username}</p>
-        <label>
-          Write message below:
-          <textarea id="message_box" rows={8} cols={100}></textarea>
+      <div className="input_field">
+        <p>ID is: {userId == null ? "ID not set yet" : userId}<br />Username is: {username == null ? "Undefined" : username}</p>
+        <label className="input_field">
+          Write message below<br />
+          <textarea id="message_box" rows={5} cols={100}></textarea>
         </label>
       </div>
       <button onClick={sendMessage}>Send</button>

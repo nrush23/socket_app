@@ -10,6 +10,11 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
+  background-color: steelblue;
+}
+
+p {
+  color: white;
 }
 
 h1 {
@@ -50,15 +55,79 @@ ul {
   padding-inline-start: 20px;
 }
 
+.room_display {
+  text-align: center;
+  font-size: larger;
+}
+
+.chat_display {
+  width: 100%;
+  height: 50vh;
+  background-color: white;
+  overflow: auto;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-radius: 10px;
+}
+
+p.user {
+  text-align: right;
+  /* text-align: right;
+  background-color: blueviolet;
+  display: inline-block; */
+}
+
+p.user span{
+  /* background-color: royalblue; */
+  background-color: #1F8AFF;
+}
+
+p.server {
+  text-align: center;
+}
+
+p.server span{
+  color: gray;
+  font-style: italic;
+}
+
+p.other{
+  text-align: left;
+}
+
+p.other span{
+  background-color: gainsboro;
+  color: black;
+}
+
+span{
+  font-size: 15px;
+  border-radius: 3px;
+  padding: 3px;
+}
+
+.button_bar {
+  display: flex;
+  justify-content: center;
+}
+
+
+
+.input_field label {
+  color: white;
+}
+
 .popup-content {
   margin: auto;
   background: rgb(255, 255, 255);
   width: 50%;
   padding: 5px;
 }
+
 .popup-arrow {
   color: rgb(255, 255, 255);
 }
+
 [role='tooltip'].popup-content {
   width: 200px;
   box-shadow: rgba(0, 0, 0, 0.16) 0px 0px 3px;
@@ -67,6 +136,7 @@ ul {
 .popup-overlay {
   background: rgba(0, 0, 0, 0.5);
 }
+
 [data-popup='tooltip'].popup-overlay {
   background: transparent;
 }

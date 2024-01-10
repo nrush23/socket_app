@@ -26,15 +26,15 @@ let server_name = "Lord Boof Boof"; //Name that gets displayed for messages sent
 
 
 function validName(name, usernames_map) {   //Usernames are only valid if the provided map of usernames does not include it
-    
+
     console.log("Checking " + displayValues(usernames_map) + " for " + name);
 
-    for (let value of usernames_map.values()){  //Cycle through each value in the provided map and check if the given name is equal
-        
-        if(name === value){                     //If they are equal, the username is not valid so return false, otherwise that username
-            
+    for (let value of usernames_map.values()) {  //Cycle through each value in the provided map and check if the given name is equal
+
+        if (name === value) {                     //If they are equal, the username is not valid so return false, otherwise that username
+
             return false;                       //does not exist and the name is valid so return true
-        
+
         }
 
     }
@@ -69,6 +69,23 @@ function displayValues(iterable) {  //Debug function that returns the toString()
     return array.toString();
 }
 
+function broadcastMessage(data) {
+    const msg = JSON.parse(data);
+    const room = msg.room;
+    // const user_Id = sockets.get(ws);
+
+    console.log("Messages sending to: " + displayValues(chatrooms.get(room).keys()));
+    for (let socket of chatrooms.get(room).values()) {  //Use the chatrooms map to get the sockets inside that room
+        socket.send(JSON.stringify({                    //and send a message to each one with the appropriate message and timestamp
+            timestamp: msg.timestamp,
+            // message: usernames.get(user_Id) + ": " + msg.message
+            username: msg.username,
+            message: msg.message
+        }));
+        console.log("Sent to: " + sockets.get(socket));
+    }
+}
+
 /*FUNCTIONS FOR RUNNING THE WEBSOCKET SERVER */
 
 wss.on('connection', function connection(ws) {
@@ -76,7 +93,7 @@ wss.on('connection', function connection(ws) {
     ws.on('error', console.error);
 
     ws.on('close', function close(data) {   //When a connection to a client ws is closed, get their userId and remove them
-                                            //from our maps
+        //from our maps
         const userId = sockets.get(ws);
         usernames.delete(userId);
         sockets.delete(ws);
@@ -86,7 +103,7 @@ wss.on('connection', function connection(ws) {
     })
 
     ws.on('message', function message(data) {   //When a client ws sends a message, check what message type it is and perform the associated actions
-                                                //Messages sent to the client can have a type, timestamp, message, userName, or newRoom field
+        //Messages sent to the client can have a type, timestamp, message, userName, or newRoom field
         const msg = JSON.parse(data);
         console.log('received: %s', data);
 
@@ -94,6 +111,7 @@ wss.on('connection', function connection(ws) {
             case "api":                         //Default initialization type from when program was first created
                 ws.send(JSON.stringify({        //Sends the basic welcome message
                     timestamp: msg.timestamp,
+                    username: "server",
                     message: server_name + ": Welcome to the Chatrooms!"
                 }));
                 break;
@@ -112,6 +130,7 @@ wss.on('connection', function connection(ws) {
                 if (!validName(newName, usernames)) {   //First check if the name is taken (not valid)
                     ws.send(JSON.stringify({            //If it is, chatlog back to them they have to try again
                         timestamp: Date.now(),
+                        username: "server",
                         message: server_name + ": Name already taken, try again."
                     }));
                 } else {
@@ -120,7 +139,8 @@ wss.on('connection', function connection(ws) {
                     ws.send(JSON.stringify({        //Send the client back the acceptable name plus a welcome username message
                         type: msg.type,
                         timestamp: Date.now(),
-                        userName: newName,
+                        newName: newName,
+                        username: "server",
                         message: server_name + ": Welcome " + usernames.get(sockets.get(ws)) + " to the Chatroom!"
                     }));
                 }
@@ -131,6 +151,7 @@ wss.on('connection', function connection(ws) {
                 if (chatrooms.has(new_room)) {      //Check if the new room already exists
                     ws.send(JSON.stringify({        //If it does, chatlog them to try again.
                         timestamp: Date.now(),
+                        username: "server",
                         message: server_name + ": This room already exists, try again."
                     }));
                 } else {                        //Otherwise, the room can be created and the user switched into it
@@ -140,7 +161,8 @@ wss.on('connection', function connection(ws) {
                         type: msg.type,
                         timestamp: Date.now(),
                         newRoom: new_room,
-                        message: server_name + ": New room: " + new_room + " created!"
+                        username: "server",
+                        message: server_name + ": New room " + new_room + " created!"
                     }));
                 }
                 break;
@@ -152,38 +174,41 @@ wss.on('connection', function connection(ws) {
 
                 if (chatrooms.has(newRoom)) {   //Check if the room exists
                     if (validName(userName, chatrooms.get(newRoom))) {  //Now check if their name is unique in that room
-                        switchRoom(userId, oldRoom, newRoom);   //If name is okay, switch them into the room and chatlog that they joined
-                        ws.send(JSON.stringify({
+                        switchRoom(userId, oldRoom, newRoom);   //If name is okay, switch them into the room
+                        ws.send(JSON.stringify({            //Now send response for client to change room
                             type: msg.type,
-                            timestamp: Date.now(),
                             newRoom: newRoom,
+                        }));                                //Broadcast message welcoming user to the room
+                        const broadcast_msg = JSON.stringify({
+                            timestamp: Date.now(),
+                            room: newRoom,
+                            username: "server",
                             message: server_name + ": Welcome " + userName + " to " + newRoom + "!"
-                        }));
+                        });
+                        broadcastMessage(broadcast_msg);
                     } else {                        //If the name is taken, tell them to rename themselves and join again
                         ws.send(JSON.stringify({
                             timestamp: Date.now(),
+                            username: "server",
                             message: server_name + ": This username is already taken, rejoin " + newRoom + " with new name."
                         }));
                     }
                 } else {                        //Otherwise, room doesn't exist so chatlog to try again
                     ws.send(JSON.stringify({
                         timestamp: Date.now(),
+                        username: "server",
                         message: server_name + ": " + newRoom + " does not exist, try again."
                     }));
                 }
                 break;
             case "sendMessage":                 //Called when the user wants to send a message
-                const room = msg.room;
-                const user_Id = sockets.get(ws);
-
-                console.log("Messages sending to: " + displayValues(chatrooms.get(room).keys()));
-                for (let socket of chatrooms.get(room).values()) {  //Use the chatrooms map to get the sockets inside that room
-                    socket.send(JSON.stringify({                    //and send a message to each one with the appropriate message and timestamp
-                        timestamp: msg.timestamp,
-                        message: usernames.get(user_Id) + ": " + msg.message
-                    }));
-                    console.log("Sent to: " + sockets.get(socket));
-                }
+                const broadcast_msg = JSON.stringify({
+                    timestamp: msg.timestamp,
+                    room: msg.room,
+                    username: usernames.get(sockets.get(ws)),
+                    message: usernames.get(sockets.get(ws)) + ": " + msg.message
+                })
+                broadcastMessage(broadcast_msg);
                 break;
             default:
                 break;
