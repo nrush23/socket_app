@@ -143,64 +143,62 @@ export default function GUI() {
         }
       </div>
       <div className="input_area">
-      <div className="button_bar">
-        <Popup trigger={<button id="set_user">Set User Name</button>}>
-          <div>
-            <label>
-              Enter your username:
-              <textarea id="username_text" rows={1} cols={23}></textarea>
-            </label>
+        <div className="button_bar">
+        <p className="debug">ID is: {userId == null ? "ID not set yet" : userId}<br />Username is: {username == null ? "Undefined" : username}</p>
+         
+          <Popup trigger={<button id="set_user">Set User Name</button>}>
             <div>
-              <button onClick={setUsername}>
-                Save
-              </button>
-              <button>
-                Cancel
-              </button>
+              <label>
+                Enter your username:
+                <textarea id="username_text" rows={1} cols={23}></textarea>
+              </label>
+              <div>
+                <button onClick={setUsername}>
+                  Save
+                </button>
+                <button>
+                  Cancel
+                </button>
+              </div>
             </div>
-          </div>
-        </Popup>
-        <Popup trigger={<button>Create Chatroom</button>}>
-          <div>
-            <label>
-              Enter your Room name:
-              <textarea id="create_room" rows={1} cols={23}></textarea>
-            </label>
+          </Popup>
+          <Popup trigger={<button>Create Chatroom</button>}>
             <div>
-              <button onClick={createChatroom}>
-                Save
-              </button>
-              <button>
-                Cancel
-              </button>
+              <label>
+                Enter your Room name:
+                <textarea id="create_room" rows={1} cols={23}></textarea>
+              </label>
+              <div>
+                <button onClick={createChatroom}>
+                  Save
+                </button>
+                <button>
+                  Cancel
+                </button>
+              </div>
             </div>
-          </div>
-        </Popup>
-        <Popup trigger={<button>Join Chatroom</button>}>
-          <div>
-            <label>
-              Enter your Room name:
-              <textarea id="join_room" rows={1} cols={23}></textarea>
-            </label>
+          </Popup>
+          <Popup trigger={<button>Join Chatroom</button>}>
             <div>
-              <button onClick={joinChatroom}>
-                Save
-              </button>
-              <button>
-                Cancel
-              </button>
+              <label>
+                Enter your Room name:
+                <textarea id="join_room" rows={1} cols={23}></textarea>
+              </label>
+              <div>
+                <button onClick={joinChatroom}>
+                  Save
+                </button>
+                <button>
+                  Cancel
+                </button>
+              </div>
             </div>
-          </div>
-        </Popup>
-      </div>
-      <div className="input_field">
-        <p className="input_field">ID is: {userId == null ? "ID not set yet" : userId}<br />Username is: {username == null ? "Undefined" : username}</p>
-        <label className="input_field">
-          Write message below<br />
-          <textarea id="message_box" rows={5} cols={100}></textarea>
-        </label>
-      </div>
-      <button className="send_button" onClick={sendMessage}>Send</button>
+          </Popup>
+        </div>
+        <div className="input_field">
+         <textarea id="message_box" className="message_box" rows={5} cols={100}></textarea>
+          <button className="send_button" onClick={sendMessage}>Send</button>
+        </div>
       </div>
     </>
   );

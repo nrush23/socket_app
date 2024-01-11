@@ -3,8 +3,12 @@
 }
 
 body {
+  /* height: max-content; */
+  /* width: 100%; */
   font-family: sans-serif;
-  margin: 40px;
+  /* margin: 40px; */
+  /* margin-left: 40px;
+  margin-right: 40px; */
   padding: 0;
   box-sizing: border-box;
   display: flex;
@@ -61,14 +65,15 @@ ul {
   top: 0;
   left: 0;
   margin-top: 0;
-  background-color: #1F8AFF;
-  border-bottom-left-radius: 25%;
-  border-bottom-right-radius: 25%;
+  background-color: rgb(64, 156, 255);
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
 }
 
 .chat_display {
   width: 100%;
-  height: 60vh;
+  height: 80vh;
+  border: 1px solid rgb(216, 216, 220);
   background-color: white;
   overflow: scroll;
   padding: 10px;
@@ -99,7 +104,7 @@ p.user {
   text-align: right;
 }
 
-p.user .message{
+p.user .message {
   background-color: #1F8AFF;
 }
 
@@ -107,70 +112,88 @@ p.server {
   text-align: center;
 }
 
-p.server .message{
+p.server .message {
   color: gray;
   font-style: italic;
 }
 
-p.other{
+p.other {
   text-align: left;
 }
 
-p.other .message{
+p.other .message {
   background-color: gainsboro;
   color: black;
 }
 
-span{
+span {
   font-size: 15px;
   border-radius: 3px;
   padding: 4px;
 }
 
-.time{
+.time {
   background-color: white;
   color: gray;
   font-size: 10px;
 }
 
 .button_bar {
-  background-color: gainsboro;
   display: flex;
   justify-content: center;
   margin: 0;
 }
 
-.button_bar button{
+.button_bar button {
   background-color: #1F8AFF;
   color: white;
   border: none;
   font-size: medium;
-  border-radius:5px;
-  margin-top: 0px;
-  margin-bottom: 0px;
+  border-radius: 5px;
+  margin-bottom: 5px;
   margin-left: 3px;
   margin-right: 3px;
 }
 
-.button_bar button:hover{
+.button_bar button:hover {
   background-color: #006FE6;
 }
 
-
-.input_field{
-  margin: 0;
-  color: gainsboro;
-}
-
-.input_area{
-  background-color: white;
+.input_area {
+  border: 1px solid rgb(216, 216, 220);
+  background-color: rgb(229,229,234);
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
+  margin: 0;
+  padding: 5px;
+}
+
+.input_field {
+  margin: 0px;
+  padding-left: 2px;
+  padding-right: 2px;
+  background-color: white;
+  border: 1px solid rgb(216, 216, 220);
+  border-radius: 20px;
+  display: flex;
+  flex-wrap: wrap; /* for horizontal aligning of child divs */
+  justify-content: center; /* for vertical aligning */
+  align-items: center;
+}
+
+.debug{
+  font-size: xx-small;
+  color: gray;
+}
+
+.message_box {
+  margin: 0px;
+  border-color: transparent;
+  resize: none;
+  width: 90%;
 }
 
 .send_button {
-  margin-left: 10px;
-  margin-bottom: 5px;
   background-color: #1F8AFF;
   color: white;
   border: none;
@@ -178,11 +201,9 @@ span{
   font-size: medium;
 }
 
-.message_box{
-  border-style: none;
-  border-color: transparent;
+.send_button:hover{
+  background-color: #006FE6;
 }
-
 
 .popup-content {
   margin: auto;
