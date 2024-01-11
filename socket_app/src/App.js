@@ -9,7 +9,7 @@ export default function GUI() {
   const [chatroom, setRoom] = useState(null);
   const [chat_log, setLog] = useState(new Map());
 
-  const [socket, setSocket] = useState(new WebSocket('ws://192.168.0.31:3001'));    //The actual socket connected to the server
+  const [socket, setSocket] = useState(new WebSocket('ws://localhost:3001'));    //The actual socket connected to the server
 
   const chat_display = useRef(null);
 
@@ -142,6 +142,7 @@ export default function GUI() {
           })
         }
       </div>
+      <div className="input_area">
       <div className="button_bar">
         <Popup trigger={<button id="set_user">Set User Name</button>}>
           <div>
@@ -193,13 +194,14 @@ export default function GUI() {
         </Popup>
       </div>
       <div className="input_field">
-        <p>ID is: {userId == null ? "ID not set yet" : userId}<br />Username is: {username == null ? "Undefined" : username}</p>
+        <p className="input_field">ID is: {userId == null ? "ID not set yet" : userId}<br />Username is: {username == null ? "Undefined" : username}</p>
         <label className="input_field">
           Write message below<br />
           <textarea id="message_box" rows={5} cols={100}></textarea>
         </label>
       </div>
-      <button onClick={sendMessage}>Send</button>
+      <button className="send_button" onClick={sendMessage}>Send</button>
+      </div>
     </>
   );
 }

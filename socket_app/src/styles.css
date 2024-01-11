@@ -10,7 +10,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: steelblue;
+  background-color: #7AB8FD;
   position: relative;
 }
 
@@ -48,36 +48,32 @@ h6 {
   font-size: 12px;
 }
 
-code {
-  font-size: 1.2em;
-}
-
 ul {
   padding-inline-start: 20px;
 }
 
 .room_display {
   text-align: center;
-  font-size: larger;
+  font-size: x-large;
   position: fixed;
-  padding: 5px;
+  padding: 3px;
   width: 100%;
   top: 0;
   left: 0;
   margin-top: 0;
-  background-color: cornflowerblue;
+  background-color: #1F8AFF;
   border-bottom-left-radius: 25%;
   border-bottom-right-radius: 25%;
 }
 
 .chat_display {
   width: 100%;
-  height: 50vh;
+  height: 60vh;
   background-color: white;
   overflow: scroll;
-  margin-bottom: 10px;
   padding: 10px;
-  border-radius: 10px;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
 }
 
 .chat_display::-webkit-scrollbar {
@@ -86,8 +82,7 @@ ul {
 }
 
 .chat_display::-webkit-scrollbar-track {
-  background-color: white;
-  border-radius: 10px;
+  opacity: 0;
 }
 
 .chat_display::-webkit-scrollbar-corner {
@@ -139,15 +134,55 @@ span{
 }
 
 .button_bar {
+  background-color: gainsboro;
   display: flex;
   justify-content: center;
+  margin: 0;
 }
 
-
-
-.input_field label {
+.button_bar button{
+  background-color: #1F8AFF;
   color: white;
+  border: none;
+  font-size: medium;
+  border-radius:5px;
+  margin-top: 0px;
+  margin-bottom: 0px;
+  margin-left: 3px;
+  margin-right: 3px;
 }
+
+.button_bar button:hover{
+  background-color: #006FE6;
+}
+
+
+.input_field{
+  margin: 0;
+  color: gainsboro;
+}
+
+.input_area{
+  background-color: white;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
+}
+
+.send_button {
+  margin-left: 10px;
+  margin-bottom: 5px;
+  background-color: #1F8AFF;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: medium;
+}
+
+.message_box{
+  border-style: none;
+  border-color: transparent;
+}
+
 
 .popup-content {
   margin: auto;
