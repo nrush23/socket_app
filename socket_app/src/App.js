@@ -196,7 +196,7 @@ export default function GUI() {
           </Popup>
         </div>
         <div className="input_field">
-         <textarea id="message_box" className="message_box" rows={5} cols={100}></textarea>
+         <textarea id="message_box" className="message_box" rows={5} cols={100} placeholder="Message"></textarea>
           <button className="send_button" onClick={sendMessage}>Send</button>
         </div>
       </div>
