@@ -76,9 +76,17 @@ export default function GUI() {
     }
   }
 
-  function receiveMessage(data) {     //Function to parse the message from the server by adding it to the chatlog based on its timestamp
+
+
+  async function receiveMessage(data) {     //Function to parse the message from the server by adding it to the chatlog based on its timestamp
     console.log(Array.from(chat_log.values()));
     const newMessages = new Map(chat_log);
+
+    let timestamp = await (async () => {
+      return new Date(data.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
+    })();
+    data.time = timestamp;
+
     newMessages.set(data.timestamp, data);
     console.log(Array.from(newMessages.values()));
     setLog(newMessages);
@@ -125,11 +133,11 @@ export default function GUI() {
         {
           Array.from(chat_log.entries()).map(([timestamp, data]) => {
             if (data.username === username) {
-              return <p className="user" key={timestamp}><span>{data.message}</span></p>
+              return <p className="user" key={timestamp}><span className="time">{data.time}</span><span className="message">{data.message}</span></p>
             } else if (data.username === "server") {
-              return <p className="server" key={timestamp}><span>{data.message}</span></p>
+              return <p className="server" key={timestamp}><span className="message">{data.message}</span><span className="time">{data.time}</span></p>
             } else {
-              return <p className="other" key={timestamp}><span>{data.message}</span></p>
+              return <p className="other" key={timestamp}><span className="message">{data.message}</span><span className="time">{data.time}</span></p>
             }
           })
         }

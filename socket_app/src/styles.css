@@ -4,13 +4,14 @@
 
 body {
   font-family: sans-serif;
-  margin: 20px;
+  margin: 40px;
   padding: 0;
   box-sizing: border-box;
   display: flex;
   justify-content: center;
   align-items: center;
   background-color: steelblue;
+  position: relative;
 }
 
 p {
@@ -58,6 +59,15 @@ ul {
 .room_display {
   text-align: center;
   font-size: larger;
+  position: fixed;
+  padding: 5px;
+  width: 100%;
+  top: 0;
+  left: 0;
+  margin-top: 0;
+  background-color: cornflowerblue;
+  border-bottom-left-radius: 25%;
+  border-bottom-right-radius: 25%;
 }
 
 .chat_display {
@@ -77,7 +87,7 @@ p.user {
   display: inline-block; */
 }
 
-p.user span{
+p.user .message{
   /* background-color: royalblue; */
   background-color: #1F8AFF;
 }
@@ -86,7 +96,7 @@ p.server {
   text-align: center;
 }
 
-p.server span{
+p.server .message{
   color: gray;
   font-style: italic;
 }
@@ -95,7 +105,7 @@ p.other{
   text-align: left;
 }
 
-p.other span{
+p.other .message{
   background-color: gainsboro;
   color: black;
 }
@@ -103,7 +113,13 @@ p.other span{
 span{
   font-size: 15px;
   border-radius: 3px;
-  padding: 3px;
+  padding: 4px;
+}
+
+.time{
+  background-color: white;
+  color: gray;
+  font-size: 10px;
 }
 
 .button_bar {

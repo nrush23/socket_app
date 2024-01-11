@@ -92,9 +92,10 @@ wss.on('connection', function connection(ws) {
 
     ws.on('error', console.error);
 
+    /*TODO: WHEN USER DELETES, REMOVE THEM FROM THE CHATROOM AND CHECK IF IT NEEDS TO BE DELETED */
+    
     ws.on('close', function close(data) {   //When a connection to a client ws is closed, get their userId and remove them
-        //from our maps
-        const userId = sockets.get(ws);
+        const userId = sockets.get(ws);     //from our maps
         usernames.delete(userId);
         sockets.delete(ws);
         users.delete(userId);
