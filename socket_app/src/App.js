@@ -9,10 +9,13 @@ export default function GUI() {
   const [userId, setID] = useState(null);
   const [chatroom, setRoom] = useState(null);
   const [chat_log, setLog] = useState(new Map());
+  const [colorIndex, setColor] = useState(0);
 
   const [socket, setSocket] = useState(new WebSocket('ws://localhost:3001'));    //The actual socket connected to the server
 
   const chat_display = useRef(null);
+
+  const colors = ["rgb(64, 156, 255)", "rgb(125, 122, 255)", "rgb(218, 143, 255)", "rgb(255, 100, 130)", "rgb(181, 148, 105)", "rgb(152, 152, 157)", "rgb(255, 105, 97)", "rgb(255, 179, 64)", "rgb(255, 212, 38)", "rgb(49, 222, 75)", "rgb(102, 21, 207)", "rgb(93, 230, 255)", "rgb(112, 215, 255)"];
 
   socket.onmessage = (event) => {     //Define the actions the socket should take when it receives a message
     const data = JSON.parse(event.data);
@@ -86,10 +89,19 @@ export default function GUI() {
     let timestamp = await (async () => {
       return new Date(data.timestamp).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" });
     })();
+
     data.time = timestamp;
+    data.color = colors[colorIndex];
+    if (data.username != "server") {
+      if (colorIndex == colors.length - 1) {
+        setColor(0);
+      } else {
+        setColor(colorIndex + 1);
+      }
+    }
 
     newMessages.set(data.timestamp, data);
-    console.log(Array.from(newMessages.values()));
+    console.log(data);
     setLog(newMessages);
   }
 
@@ -133,14 +145,14 @@ export default function GUI() {
       <div id="chat_display" className="chat_display" ref={chat_display}>
         {
           Array.from(chat_log.entries()).map(([timestamp, data]) => {
-            return <Message key={timestamp} type={data.username === username ? "user" : (data.username ==="server" ? "server" : "other")} time={data.time} message={data.message} username={data.username} color="#1F8AFF"/> 
+            return <Message key={timestamp} type={data.username === username ? "user" : (data.username === "server" ? "server" : "other")} time={data.time} message={data.message} username={data.username} color={data.color} />
           })
         }
       </div>
       <div className="input_area">
         <div className="button_bar">
-        <p className="debug">ID is: {userId == null ? "ID not set yet" : userId}<br />Username is: {username == null ? "Undefined" : username}</p>
-         
+          <p className="debug">ID is: {userId == null ? "ID not set yet" : userId}<br />Username is: {username == null ? "Undefined" : username}</p>
+
           <Popup trigger={<button id="set_user">Set User Name</button>}>
             <div>
               <label>
@@ -191,7 +203,7 @@ export default function GUI() {
           </Popup>
         </div>
         <div className="input_field">
-         <textarea id="message_box" className="message_box" rows={5} cols={100} placeholder="Message"></textarea>
+          <textarea id="message_box" className="message_box" rows={5} cols={100} placeholder="Message"></textarea>
           <button className="send_button" onClick={sendMessage}>Send</button>
         </div>
       </div>
