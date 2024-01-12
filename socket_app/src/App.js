@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Popup from "reactjs-popup";
+import Message from "./Message.js"
 
 
 export default function GUI() {
@@ -132,13 +133,7 @@ export default function GUI() {
       <div id="chat_display" className="chat_display" ref={chat_display}>
         {
           Array.from(chat_log.entries()).map(([timestamp, data]) => {
-            if (data.username === username) {
-              return <p className="user" key={timestamp}><span className="time">{data.time}</span><span className="message">{data.message}</span></p>
-            } else if (data.username === "server") {
-              return <p className="server" key={timestamp}><span className="message">{data.message}</span><span className="time">{data.time}</span></p>
-            } else {
-              return <p className="other" key={timestamp}><span className="message">{data.message}</span><span className="time">{data.time}</span></p>
-            }
+            return <Message key={timestamp} type={data.username === username ? "user" : (data.username ==="server" ? "server" : "other")} time={data.time} message={data.message} username={data.username} color="#1F8AFF"/> 
           })
         }
       </div>

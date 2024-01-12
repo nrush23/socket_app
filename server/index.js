@@ -142,7 +142,7 @@ wss.on('connection', function connection(ws) {
                         timestamp: Date.now(),
                         newName: newName,
                         username: "server",
-                        message: server_name + ": Welcome " + usernames.get(sockets.get(ws)) + " to the Chatroom!"
+                        message: server_name + ": Welcome " + usernames.get(sockets.get(ws)) + " to the Chatrooms!"
                     }));
                 }
                 break;
@@ -207,7 +207,7 @@ wss.on('connection', function connection(ws) {
                     timestamp: msg.timestamp,
                     room: msg.room,
                     username: usernames.get(sockets.get(ws)),
-                    message: usernames.get(sockets.get(ws)) + ": " + msg.message
+                    message: msg.message
                 })
                 broadcastMessage(broadcast_msg);
                 break;

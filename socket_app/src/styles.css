@@ -102,12 +102,32 @@ ul {
   height: 4px;
 }
 
+div.other{
+  display: flex;
+  margin-bottom: 10px;
+}
+
+div.message{
+  display: flex;
+  flex-direction: column;
+}
+
+span.circle_icon {
+  color: gray;
+  margin: 0px;
+}
+
 p.user {
   text-align: right;
 }
 
 p.user .message {
+  margin: 0px;
   background-color: #1F8AFF;
+  display: inline-block;
+  max-width: 40%;
+  white-space: pre-wrap;
+  word-wrap: break-word;
 }
 
 p.server {
@@ -120,12 +140,24 @@ p.server .message {
 }
 
 p.other {
+  margin: 0px;
+  padding: 0px;
   text-align: left;
 }
 
 p.other .message {
+  margin: 0px;
   background-color: gainsboro;
   color: black;
+  display: inline-block;
+  max-width: 40%;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+span.username {
+  color: gray;
+  font-size: 14px;
 }
 
 span {
@@ -178,9 +210,7 @@ span {
   border-radius: 20px;
   display: flex;
   flex-wrap: wrap;
-  /* for horizontal aligning of child divs */
   justify-content: center;
-  /* for vertical aligning */
   align-items: center;
 }
 
