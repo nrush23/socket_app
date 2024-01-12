@@ -11,12 +11,16 @@ body {
   font-family: sans-serif;
   padding: 0;
   margin: 0;
-  box-sizing: border-box;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   background-image: linear-gradient(#7AB8FD, rgb(0, 122, 255));
   position: relative;
+}
+
+div.app {
+  margin: auto;
+  padding: 0px;
+  width: 80%;
+  justify-content: center;
+  align-items: center;
 }
 
 .room_display {
@@ -26,8 +30,6 @@ body {
   position: sticky;
   padding: 3px;
   width: 100%;
-  top: 0;
-  left: 0;
   margin: 0px;
   background-color: rgb(64, 156, 255);
   border-bottom-left-radius: 5px;
@@ -38,9 +40,15 @@ p {
   color: white;
 }
 
+span {
+  font-size: 15px;
+  border-radius: 3px;
+  padding: 4px;
+}
+
 .chat_display {
   width: 100%;
-  height: 75vh;
+  min-height: 75vh;
   border: 1px solid rgb(216, 216, 220);
   background-color: white;
   overflow: scroll;
@@ -68,12 +76,37 @@ p {
   height: 4px;
 }
 
-div.other{
+span.message {
+  margin: 0px;
+  display: inline-block;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+div.other {
   display: flex;
   margin-bottom: 10px;
 }
 
-div.message{
+p.other {
+  margin: 0px;
+  padding: 0px;
+  text-align: left;
+  max-width: 40%;
+}
+
+
+p.other .message {
+  background-color: gainsboro;
+  color: black;
+}
+
+span.username {
+  color: gray;
+  font-size: 14px;
+}
+
+div.message {
   display: flex;
   flex-direction: column;
 }
@@ -90,10 +123,8 @@ p.user {
 p.user .message {
   margin: 0px;
   background-color: #1F8AFF;
-  display: inline-block;
   max-width: 40%;
-  white-space: pre-wrap;
-  word-wrap: break-word;
+  text-align: center;
 }
 
 p.server {
@@ -105,32 +136,6 @@ p.server .message {
   font-style: italic;
 }
 
-p.other {
-  margin: 0px;
-  padding: 0px;
-  text-align: left;
-}
-
-p.other .message {
-  margin: 0px;
-  background-color: gainsboro;
-  color: black;
-  display: inline-block;
-  max-width: 40%;
-  white-space: pre-wrap;
-  word-wrap: break-word;
-}
-
-span.username {
-  color: gray;
-  font-size: 14px;
-}
-
-span {
-  font-size: 15px;
-  border-radius: 3px;
-  padding: 4px;
-}
 
 .time {
   background-color: white;

@@ -141,70 +141,72 @@ export default function GUI() {
   /* CODE TO CREATE THE REACT HTML */
   return (
     <>
-      <p className="room_display">{chatroom == null ? "Lobby" : "Chatroom is: " + chatroom}</p>
-      <div id="chat_display" className="chat_display" ref={chat_display}>
-        {
-          Array.from(chat_log.entries()).map(([timestamp, data]) => {
-            return <Message key={timestamp} type={data.username === username ? "user" : (data.username === "server" ? "server" : "other")} time={data.time} message={data.message} username={data.username} color={data.color} />
-          })
-        }
-      </div>
-      <div className="input_area">
-        <div className="button_bar">
-          <p className="debug">ID is: {userId == null ? "ID not set yet" : userId}<br />Username is: {username == null ? "Undefined" : username}</p>
-
-          <Popup trigger={<button id="set_user">Set User Name</button>}>
-            <div>
-              <label>
-                Enter your username:
-                <textarea id="username_text" rows={1} cols={23}></textarea>
-              </label>
-              <div>
-                <button onClick={setUsername}>
-                  Save
-                </button>
-                <button>
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </Popup>
-          <Popup trigger={<button>Create Chatroom</button>}>
-            <div>
-              <label>
-                Enter your Room name:
-                <textarea id="create_room" rows={1} cols={23}></textarea>
-              </label>
-              <div>
-                <button onClick={createChatroom}>
-                  Save
-                </button>
-                <button>
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </Popup>
-          <Popup trigger={<button>Join Chatroom</button>}>
-            <div>
-              <label>
-                Enter your Room name:
-                <textarea id="join_room" rows={1} cols={23}></textarea>
-              </label>
-              <div>
-                <button onClick={joinChatroom}>
-                  Save
-                </button>
-                <button>
-                  Cancel
-                </button>
-              </div>
-            </div>
-          </Popup>
+      <div className="app">
+        <p className="room_display">{chatroom == null ? "Lobby" : "Chatroom is: " + chatroom}</p>
+        <div id="chat_display" className="chat_display" ref={chat_display}>
+          {
+            Array.from(chat_log.entries()).map(([timestamp, data]) => {
+              return <Message key={timestamp} type={data.username === username ? "user" : (data.username === "server" ? "server" : "other")} time={data.time} message={data.message} username={data.username} color={data.color} />
+            })
+          }
         </div>
-        <div className="input_field">
-          <textarea id="message_box" className="message_box" rows={5} cols={100} placeholder="Message"></textarea>
-          <button className="send_button" onClick={sendMessage}>Send</button>
+        <div className="input_area">
+          <div className="button_bar">
+            <p className="debug">ID is: {userId == null ? "ID not set yet" : userId}<br />Username is: {username == null ? "Undefined" : username}</p>
+
+            <Popup trigger={<button id="set_user">Set User Name</button>}>
+              <div>
+                <label>
+                  Enter your username:
+                  <textarea id="username_text" rows={1} cols={23}></textarea>
+                </label>
+                <div>
+                  <button onClick={setUsername}>
+                    Save
+                  </button>
+                  <button>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </Popup>
+            <Popup trigger={<button>Create Chatroom</button>}>
+              <div>
+                <label>
+                  Enter your Room name:
+                  <textarea id="create_room" rows={1} cols={23}></textarea>
+                </label>
+                <div>
+                  <button onClick={createChatroom}>
+                    Save
+                  </button>
+                  <button>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </Popup>
+            <Popup trigger={<button>Join Chatroom</button>}>
+              <div>
+                <label>
+                  Enter your Room name:
+                  <textarea id="join_room" rows={1} cols={23}></textarea>
+                </label>
+                <div>
+                  <button onClick={joinChatroom}>
+                    Save
+                  </button>
+                  <button>
+                    Cancel
+                  </button>
+                </div>
+              </div>
+            </Popup>
+          </div>
+          <div className="input_field">
+            <textarea id="message_box" className="message_box" rows={5} cols={100} placeholder="Message"></textarea>
+            <button className="send_button" onClick={sendMessage}>Send</button>
+          </div>
         </div>
       </div>
     </>

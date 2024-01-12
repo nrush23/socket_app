@@ -27,7 +27,6 @@ export default function Message(props) {
                     </div>
                 </div>
             );
-        // return <span style={iconStyle}>{props.username.charAt(0)}<div className={props.type}><span className="circle_icon">{props.username}</span><p className={props.type}><span className="message">{props.message}</span><span className="time">{props.time}</span></p></div></span>
         default:
             return <p className={props.type}><span className="message">{props.message}</span><span className="time">{props.time}</span></p>
     }
