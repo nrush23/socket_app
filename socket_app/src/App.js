@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Popup from "reactjs-popup";
 import Message from "./Message.js"
+import Test from "./Test.js";
 
 
 export default function GUI() {
@@ -11,6 +12,7 @@ export default function GUI() {
   const [chat_log, setLog] = useState(new Map());
   const [colorIndex, setColor] = useState(0);
   const [clients, setClients] = useState(new Map());
+  const [test, setTruth] = useState(false);
 
   const [socket, setSocket] = useState(new WebSocket('ws://localhost:3001'));    //The actual socket connected to the server
 
@@ -81,12 +83,12 @@ export default function GUI() {
     }
   }
 
-  function getBubbleColor(name){
-    if(!clients.has(name)){    
+  function getBubbleColor(name) {
+    if (!clients.has(name)) {
       clients.set(name, colors[colorIndex]);
-      if(colorIndex == colors.length - 1){
+      if (colorIndex == colors.length - 1) {
         setColor(0);
-      }else{
+      } else {
         setColor(colorIndex + 1);
       }
     }
@@ -105,7 +107,7 @@ export default function GUI() {
 
     data.time = timestamp;
 
-    if(data.username != "server" && data.username != username){
+    if (data.username != "server" && data.username != username) {
       data.color = getBubbleColor(data.username);
     }
 
@@ -122,6 +124,7 @@ export default function GUI() {
         username: name
       }));
     }
+    document.getElementById("username_text").value = "";
   }
 
   function createChatroom() {   //Function to create a new chatroom by sending a request to the server
@@ -162,23 +165,13 @@ export default function GUI() {
         <div className="input_area">
           <div className="button_bar">
             <p className="debug">ID is: {userId == null ? "ID not set yet" : userId}<br />Username is: {username == null ? "Undefined" : username}</p>
-
-            <Popup trigger={<button id="set_user">Set User Name</button>}>
-              <div>
-                <label>
-                  Enter your username:
-                  <textarea id="username_text" rows={1} cols={23}></textarea>
-                </label>
-                <div>
-                  <button onClick={setUsername}>
-                    Save
-                  </button>
-                  <button>
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            </Popup>
+            <button id="set+user" onClick={() => { setTruth(true); }}>Set Username</button>
+            <Test inputId="username_text" close={() => {
+              setTruth(false);
+            }} submit={() => {
+              setUsername();
+              setTruth(false)
+            }} opener={test} label="Enter your username:"></Test>
             <Popup trigger={<button>Create Chatroom</button>}>
               <div>
                 <label>

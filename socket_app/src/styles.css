@@ -19,6 +19,7 @@ div.app {
   margin: auto;
   padding: 0px;
   width: 80%;
+  height: 100%;
   justify-content: center;
   align-items: center;
 }
@@ -48,7 +49,7 @@ span {
 
 .chat_display {
   width: 100%;
-  min-height: 75vh;
+  height: 75vh;
   border: 1px solid rgb(216, 216, 220);
   background-color: white;
   overflow: scroll;
@@ -87,7 +88,7 @@ span.message {
 div.other {
   display: flex;
   margin-bottom: 10px;
-  max-width: 40%;
+  max-width: 100%;
 }
 
 p.other {
@@ -95,7 +96,6 @@ p.other {
   padding: 0px;
   text-align: left;
 }
-
 
 p.other .message {
   background-color: gainsboro;
@@ -110,6 +110,7 @@ span.username {
 div.message {
   display: flex;
   flex-direction: column;
+  max-width: 40%;
 }
 
 span.circle_icon {

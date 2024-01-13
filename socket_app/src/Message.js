@@ -3,13 +3,13 @@ export default function Message(props) {
     console.log(props);
     const iconStyle = {
         color: "white",
-        borderRadius: "20px",
+        borderRadius: "30px",
         display: "flex",
         alignItems: "center",
         justifyContent: "center", 
         backgroundColor: props.color,
-        height: "2em",
-        width: "2em"
+        height: "30px",
+        width: "30px"
     };
     switch (props.type) {
         case "user":
