@@ -1,8 +1,8 @@
 export default class User {
     ws;
-    id = null;
-    name = null;
-    room = null;
+    id;
+    name;
+    room;
 
     constructor(ws){
         this.ws = ws;

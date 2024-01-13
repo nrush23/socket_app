@@ -10,6 +10,7 @@ export default function GUI() {
   const [chatroom, setRoom] = useState(null);
   const [chat_log, setLog] = useState(new Map());
   const [colorIndex, setColor] = useState(0);
+  const [clients, setClients] = useState(new Map());
 
   const [socket, setSocket] = useState(new WebSocket('ws://localhost:3001'));    //The actual socket connected to the server
 
@@ -80,6 +81,18 @@ export default function GUI() {
     }
   }
 
+  function getBubbleColor(name){
+    if(!clients.has(name)){    
+      clients.set(name, colors[colorIndex]);
+      if(colorIndex == colors.length - 1){
+        setColor(0);
+      }else{
+        setColor(colorIndex + 1);
+      }
+    }
+    return clients.get(name);
+  }
+
 
 
   async function receiveMessage(data) {     //Function to parse the message from the server by adding it to the chatlog based on its timestamp
@@ -91,13 +104,9 @@ export default function GUI() {
     })();
 
     data.time = timestamp;
-    data.color = colors[colorIndex];
-    if (data.username != "server") {
-      if (colorIndex == colors.length - 1) {
-        setColor(0);
-      } else {
-        setColor(colorIndex + 1);
-      }
+
+    if(data.username != "server" && data.username != username){
+      data.color = getBubbleColor(data.username);
     }
 
     newMessages.set(data.timestamp, data);

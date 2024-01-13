@@ -1,24 +1,8 @@
-// const express = require("express"); //Import the express, core, http, and WebSocket packages
-// const cors = require('cors');
-// const http = require('http');
-// const WebSocket = require('ws');
-// const User = require('./User.js');
-// import express from 'express';
-// import cors from 'cors';
-// import http from 'http';
-// import { WebSocket } from "ws";
-// const express = require("express"); //Import the express, core, http, and WebSocket packages
-// const cors = require('cors');
-// const http = require('http');
-// const WebSocket = require('ws');
-// const User = require('./User.js');
-
-
 import User from "./User.js";
 import express from 'express';
 import cors from 'cors';
 import http from 'http';
-import {WebSocketServer} from 'ws';
+import { WebSocketServer } from 'ws';
 
 
 
@@ -61,12 +45,16 @@ function validName(name, users) {   //Usernames are only valid if the provided m
 }
 
 function removeFromRoom(userId, room) {
-    chatrooms.get(room).delete(userId);
-    if (chatrooms.get(room).size == 0) {
-        chatrooms.delete(room);
-        console.log("Chatroom " + room + " was deleted.");
-    } else {
-        console.log("Chatroom " + room + " after deleting " + userId + ": " + displayValues(chatrooms.get(room).keys()));
+    if (room != null) {
+        chatrooms.get(room).delete(userId);
+        if (chatrooms.get(room).size == 0) {
+            chatrooms.delete(room);
+            console.log("Chatroom " + room + " was deleted.");
+        } else {
+            console.log("Chatroom " + room + " after deleting " + userId + ": " + displayValues(chatrooms.get(room).keys()));
+        }
+    }else{
+        console.log(userId + "'s room was null");
     }
 }
 
@@ -77,8 +65,9 @@ function switchRoom(userId, oldRoom, newRoom) {     //Function to switch a user 
         console.log(newRoom + " before joining: " + displayValues(chatrooms.get(newRoom).keys()));
         removeFromRoom(userId, oldRoom);
     }
-
     chatrooms.get(newRoom).set(userId, users.get(userId));  //Now set the new room to add the user and their socket from the users map
+    users.get(userId).setRoom(newRoom);
+    console.log(users.get(userId).toString());
     console.log(newRoom + " after joining: " + displayValues(chatrooms.get(newRoom).keys()));
 }
 
@@ -109,13 +98,14 @@ wss.on('connection', function connection(ws) {
 
     ws.on('error', console.error);
 
-    /*TODO: WHEN USER DELETES, REMOVE THEM FROM THE CHATROOM AND CHECK IF IT NEEDS TO BE DELETED */
-
     ws.on('close', function close(data) {   //When a connection to a client ws is closed, get their userId and remove them
-        const userId = ws.id;
-        removeFromRoom(userId, users.get(userId).getRoom());
-        users.delete(userId);
-        console.log(userId + " deleted.");
+        if (ws.id != null) {
+            removeFromRoom(ws.id, users.get(ws.id).getRoom());
+            users.delete(ws.id);
+            console.log("User " + ws.id + " deleted");
+        } else {
+            console.log("Non-app connection closed");
+        }
     })
 
     ws.on('message', function message(data) {   //When a client ws sends a message, check what message type it is and perform the associated actions
@@ -137,7 +127,7 @@ wss.on('connection', function connection(ws) {
                 user.setId(users.size);
                 users.set(user.id, user);
                 ws.id = user.id;
-                
+
                 ws.send(JSON.stringify({           //Send the client back their userId, no chatlog needed
                     type: msg.type,
                     message: user.id
@@ -205,7 +195,7 @@ wss.on('connection', function connection(ws) {
                             timestamp: Date.now(),
                             room: newRoom,
                             username: "server",
-                            message: server_name + ": Welcome " + userName + " to " + newRoom + "!"
+                            message: server_name + ": " + userName + " has joined " + newRoom + "!"
                         });
                         broadcastMessage(broadcast_msg);
                     } else {                        //If the name is taken, tell them to rename themselves and join again

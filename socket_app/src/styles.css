@@ -81,18 +81,19 @@ span.message {
   display: inline-block;
   white-space: pre-wrap;
   word-wrap: break-word;
+  max-width: 80%;
 }
 
 div.other {
   display: flex;
   margin-bottom: 10px;
+  max-width: 40%;
 }
 
 p.other {
   margin: 0px;
   padding: 0px;
   text-align: left;
-  max-width: 40%;
 }
 
 
