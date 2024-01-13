@@ -12,7 +12,10 @@ export default function GUI() {
   const [chat_log, setLog] = useState(new Map());
   const [colorIndex, setColor] = useState(0);
   const [clients, setClients] = useState(new Map());
-  const [test, setTruth] = useState(false);
+
+  const [set_name, nameDialog] = useState(false);
+  const [create_room, createDialog] = useState(false);
+  const [join_room, joinDialog] = useState(false);
 
   const [socket, setSocket] = useState(new WebSocket('ws://localhost:3001'));    //The actual socket connected to the server
 
@@ -165,45 +168,12 @@ export default function GUI() {
         <div className="input_area">
           <div className="button_bar">
             <p className="debug">ID is: {userId == null ? "ID not set yet" : userId}<br />Username is: {username == null ? "Undefined" : username}</p>
-            <button id="set+user" onClick={() => { setTruth(true); }}>Set Username</button>
-            <Test inputId="username_text" close={() => {
-              setTruth(false);
-            }} submit={() => {
-              setUsername();
-              setTruth(false)
-            }} opener={test} label="Enter your username:"></Test>
-            <Popup trigger={<button>Create Chatroom</button>}>
-              <div>
-                <label>
-                  Enter your Room name:
-                  <textarea id="create_room" rows={1} cols={23}></textarea>
-                </label>
-                <div>
-                  <button onClick={createChatroom}>
-                    Save
-                  </button>
-                  <button>
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            </Popup>
-            <Popup trigger={<button>Join Chatroom</button>}>
-              <div>
-                <label>
-                  Enter your Room name:
-                  <textarea id="join_room" rows={1} cols={23}></textarea>
-                </label>
-                <div>
-                  <button onClick={joinChatroom}>
-                    Save
-                  </button>
-                  <button>
-                    Cancel
-                  </button>
-                </div>
-              </div>
-            </Popup>
+            <button id="set_user" onClick={() => { nameDialog(true); }}>Set Username</button>
+            <Test inputId="username_text" close={() => {nameDialog(false);}} submit={() => {setUsername();nameDialog(false);}} opener={set_name} label="Enter your username"></Test>
+            <button id="create_chatroom" onClick={() => {createDialog(true);}}>Create Chatroom</button>
+            <Test opener={create_room} label="Enter your room name"inputId="create_room" close={() => {createDialog(false)}} submit={()=>{createChatroom(); createDialog(false);}}></Test>
+            <button id="join_chatroom" onClick={()=>{joinDialog(true);}}>Join Chatroom</button>
+            <Test opener={join_room} label="Enter your room name" inputId="join_room" close={()=> {joinDialog(false)}} submit={()=>{joinChatroom(); joinDialog(false);}}></Test>
           </div>
           <div className="input_field">
             <textarea id="message_box" className="message_box" rows={5} cols={100} placeholder="Message"></textarea>
