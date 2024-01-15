@@ -187,6 +187,13 @@ p.server .message {
   align-items: center;
 }
 
+.backdrop {
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  border: none;
+}
+
 .debug {
   font-size: xx-small;
   color: lightgray;

@@ -16,6 +16,7 @@ export default function GUI() {
   const [set_name, nameDialog] = useState(false);
   const [create_room, createDialog] = useState(false);
   const [join_room, joinDialog] = useState(false);
+  const [backdrop, setDrop] = useState(false);
 
   const [socket, setSocket] = useState(new WebSocket('ws://localhost:3001'));    //The actual socket connected to the server
 
@@ -156,6 +157,7 @@ export default function GUI() {
   /* CODE TO CREATE THE REACT HTML */
   return (
     <>
+      <dialog className="backdrop" open={backdrop} onClick={()=>{setDrop(false); nameDialog(false); createDialog(false); joinDialog(false);}}></dialog>
       <div className="app">
         <p className="room_display">{chatroom == null ? "Lobby" : "Chatroom is: " + chatroom}</p>
         <div id="chat_display" className="chat_display" ref={chat_display}>
@@ -168,12 +170,13 @@ export default function GUI() {
         <div className="input_area">
           <div className="button_bar">
             <p className="debug">ID is: {userId == null ? "ID not set yet" : userId}<br />Username is: {username == null ? "Undefined" : username}</p>
-            <button id="set_user" onClick={() => { nameDialog(true); }}>Set Username</button>
-            <Test inputId="username_text" close={() => {nameDialog(false);}} submit={() => {setUsername();nameDialog(false);}} opener={set_name} label="Enter your username"></Test>
-            <button id="create_chatroom" onClick={() => {createDialog(true);}}>Create Chatroom</button>
-            <Test opener={create_room} label="Enter your room name"inputId="create_room" close={() => {createDialog(false)}} submit={()=>{createChatroom(); createDialog(false);}}></Test>
-            <button id="join_chatroom" onClick={()=>{joinDialog(true);}}>Join Chatroom</button>
-            <Test opener={join_room} label="Enter your room name" inputId="join_room" close={()=> {joinDialog(false)}} submit={()=>{joinChatroom(); joinDialog(false);}}></Test>
+            <button id="set_user" onClick={() => { nameDialog(true); setDrop(true);}}>Set Username</button>
+
+            <Test inputId="username_text" close={() => { nameDialog(false); }} submit={() => { setUsername(); nameDialog(false); }} opener={set_name} label="Enter your username"></Test>
+            <button id="create_chatroom" onClick={() => { createDialog(true); setDrop(true);}}>Create Chatroom</button>
+            <Test opener={create_room} label="Enter your room name" inputId="create_room" close={() => { createDialog(false) }} submit={() => { createChatroom(); createDialog(false); }}></Test>
+            <button id="join_chatroom" onClick={() => { joinDialog(true); setDrop(true);}}>Join Chatroom</button>
+            <Test opener={join_room} label="Enter your room name" inputId="join_room" close={() => { joinDialog(false) }} submit={() => { joinChatroom(); joinDialog(false); }}></Test>
           </div>
           <div className="input_field">
             <textarea id="message_box" className="message_box" rows={5} cols={100} placeholder="Message"></textarea>

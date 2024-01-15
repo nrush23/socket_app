@@ -1,6 +1,6 @@
 
 export default function Message(props) {
-    console.log(props);
+    // console.log(props);
     const iconStyle = {
         color: "white",
         borderRadius: "30px",
