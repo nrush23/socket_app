@@ -1,9 +1,5 @@
 
 export default function Message(props) {
-<<<<<<< Updated upstream
-    // console.log(props);
-=======
->>>>>>> Stashed changes
     const iconStyle = {
         color: "white",
         borderRadius: "30px",

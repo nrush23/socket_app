@@ -224,10 +224,17 @@ p.server .message {
 dialog{
   border-radius: 5px;
   border: 1px solid rgb(216, 216, 220);
+  padding: 0px;
 }
 
-.dialog{
+.dialog {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 3px;
 }
+
+.dialog input {
+  margin-bottom: 3px;
+}
+

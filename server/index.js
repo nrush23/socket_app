@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import http from 'http';
 import { WebSocketServer } from 'ws';
-
+import { v4 as uuidv4 } from 'uuid';
 
 
 
@@ -124,9 +124,9 @@ wss.on('connection', function connection(ws) {
             case "getID"://Called by the client when they first connect so they can get a unique userId
 
                 let user = new User(ws);
-                user.setId(users.size);
+                ws.id = uuidv4();
+                user.setId(ws.id);
                 users.set(user.id, user);
-                ws.id = user.id;
 
                 ws.send(JSON.stringify({           //Send the client back their userId, no chatlog needed
                     type: msg.type,

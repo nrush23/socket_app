@@ -26,7 +26,6 @@ export default function GUI() {
 
   socket.onmessage = (event) => {     //Define the actions the socket should take when it receives a message
     const data = JSON.parse(event.data);
-    console.log(data);
     switch (data.type) {    //Switch statement to handle the different message types
       case "getID":         //getID returns the unique Id of the client
         setID(data.message);  //We return from the function here because getID has no chatlog
@@ -89,17 +88,20 @@ export default function GUI() {
 
   function getBubbleColor(name) {
     if (!clients.has(name)) {
-      clients.set(name, colors[colorIndex]);
+      const color = colors[colorIndex];
+      setClients(new Map(clients).set(name, color));
       if (colorIndex == colors.length - 1) {
         setColor(0);
       } else {
         setColor(colorIndex + 1);
       }
+      return color;
     }
     return clients.get(name);
   }
 
   function openDialog(type) {
+    setDrop(true);
     switch (type) {
       case "name":
         nameDialog(!set_name);
@@ -121,10 +123,20 @@ export default function GUI() {
     }
   }
 
+  function closeDialog(){
+    setDrop(false);
+    nameDialog(false);
+    createDialog(false);
+    joinDialog(false);
+
+    document.getElementById("username_text").value = "";
+    document.getElementById("create_room").value = "";
+    document.getElementById("join_room").value = "";
+  }
+
 
 
   async function receiveMessage(data) {     //Function to parse the message from the server by adding it to the chatlog based on its timestamp
-    console.log(Array.from(chat_log.values()));
     const newMessages = new Map(chat_log);
 
     let timestamp = await (async () => {
@@ -138,7 +150,7 @@ export default function GUI() {
     }
 
     newMessages.set(data.timestamp, data);
-    console.log(data);
+    console.log("Message received: " + data);
     setLog(newMessages);
   }
 
@@ -179,7 +191,7 @@ export default function GUI() {
   /* CODE TO CREATE THE REACT HTML */
   return (
     <>
-      <dialog className="backdrop" open={backdrop} onClick={()=>{setDrop(false); nameDialog(false); createDialog(false); joinDialog(false);}}></dialog>
+      <dialog className="backdrop" open={backdrop} onClick={()=>{closeDialog()}}></dialog>
       <div className="app">
         <p className="room_display">{chatroom == null ? "Lobby" : "Chatroom is: " + chatroom}</p>
         <div id="chat_display" className="chat_display" ref={chat_display}>
@@ -192,19 +204,9 @@ export default function GUI() {
         <div className="input_area">
           <div className="button_bar">
             <p className="debug">ID is: {userId == null ? "ID not set yet" : userId}<br />Username is: {username == null ? "Undefined" : username}</p>
-<<<<<<< Updated upstream
-            <button id="set_user" onClick={() => { nameDialog(true); setDrop(true);}}>Set Username</button>
-
-            <Test inputId="username_text" close={() => { nameDialog(false); }} submit={() => { setUsername(); nameDialog(false); }} opener={set_name} label="Enter your username"></Test>
-            <button id="create_chatroom" onClick={() => { createDialog(true); setDrop(true);}}>Create Chatroom</button>
-            <Test opener={create_room} label="Enter your room name" inputId="create_room" close={() => { createDialog(false) }} submit={() => { createChatroom(); createDialog(false); }}></Test>
-            <button id="join_chatroom" onClick={() => { joinDialog(true); setDrop(true);}}>Join Chatroom</button>
-            <Test opener={join_room} label="Enter your room name" inputId="join_room" close={() => { joinDialog(false) }} submit={() => { joinChatroom(); joinDialog(false); }}></Test>
-=======
-            <ButtonPopup buttonClick={() => openDialog("name")} buttonText="Set Username" inputId="username_text" close={() => nameDialog(false)} submit={() => { setUsername(); nameDialog(false) }} opener={set_name} label="Enter your username"></ButtonPopup>
-            <ButtonPopup buttonClick={() => openDialog("create")} buttonText="Create Chatroom" opener={create_room} label="Enter your room name" inputId="create_room" close={() => createDialog(false)} submit={() => { createChatroom(); createDialog(false); }}></ButtonPopup>
-            <ButtonPopup buttonClick={() => openDialog("join")} buttonText="Join Chatroom" opener={join_room} label="Enter your room name" inputId="join_room" close={() => joinDialog(false)} submit={() => { joinChatroom(); joinDialog(false); }}></ButtonPopup>
->>>>>>> Stashed changes
+            <ButtonPopup buttonClick={() => openDialog("name")} buttonText="Set Username" inputId="username_text" close={() => closeDialog()} submit={() => { setUsername(); closeDialog(); }} opener={set_name} label="Enter your username"></ButtonPopup>
+            <ButtonPopup buttonClick={() => openDialog("create")} buttonText="Create Chatroom" opener={create_room} label="Enter your room name" inputId="create_room" close={() => closeDialog()} submit={() => { createChatroom(); closeDialog(); }}></ButtonPopup>
+            <ButtonPopup buttonClick={() => openDialog("join")} buttonText="Join Chatroom" opener={join_room} label="Enter your room name" inputId="join_room" close={() => closeDialog()} submit={() => { joinChatroom(); closeDialog(); }}></ButtonPopup>
           </div>
           <div className="input_field">
             <textarea id="message_box" className="message_box" rows={5} cols={100} placeholder="Message"></textarea>
