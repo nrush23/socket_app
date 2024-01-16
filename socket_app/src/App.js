@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Popup from "reactjs-popup";
 import Message from "./Message.js"
-import Test from "./Test.js";
+import ButtonPopup from "./ButtonPopup.js";
 
 
 export default function GUI() {
@@ -99,6 +99,28 @@ export default function GUI() {
     return clients.get(name);
   }
 
+  function openDialog(type) {
+    switch (type) {
+      case "name":
+        nameDialog(!set_name);
+        createDialog(false);
+        joinDialog(false);
+        break;
+      case "create":
+        nameDialog(false);
+        createDialog(!create_room);
+        joinDialog(false);
+        break;
+      case "join":
+        nameDialog(false);
+        createDialog(false);
+        joinDialog(!join_room);
+        break;
+      default:
+        break;
+    }
+  }
+
 
 
   async function receiveMessage(data) {     //Function to parse the message from the server by adding it to the chatlog based on its timestamp
@@ -170,6 +192,7 @@ export default function GUI() {
         <div className="input_area">
           <div className="button_bar">
             <p className="debug">ID is: {userId == null ? "ID not set yet" : userId}<br />Username is: {username == null ? "Undefined" : username}</p>
+<<<<<<< Updated upstream
             <button id="set_user" onClick={() => { nameDialog(true); setDrop(true);}}>Set Username</button>
 
             <Test inputId="username_text" close={() => { nameDialog(false); }} submit={() => { setUsername(); nameDialog(false); }} opener={set_name} label="Enter your username"></Test>
@@ -177,6 +200,11 @@ export default function GUI() {
             <Test opener={create_room} label="Enter your room name" inputId="create_room" close={() => { createDialog(false) }} submit={() => { createChatroom(); createDialog(false); }}></Test>
             <button id="join_chatroom" onClick={() => { joinDialog(true); setDrop(true);}}>Join Chatroom</button>
             <Test opener={join_room} label="Enter your room name" inputId="join_room" close={() => { joinDialog(false) }} submit={() => { joinChatroom(); joinDialog(false); }}></Test>
+=======
+            <ButtonPopup buttonClick={() => openDialog("name")} buttonText="Set Username" inputId="username_text" close={() => nameDialog(false)} submit={() => { setUsername(); nameDialog(false) }} opener={set_name} label="Enter your username"></ButtonPopup>
+            <ButtonPopup buttonClick={() => openDialog("create")} buttonText="Create Chatroom" opener={create_room} label="Enter your room name" inputId="create_room" close={() => createDialog(false)} submit={() => { createChatroom(); createDialog(false); }}></ButtonPopup>
+            <ButtonPopup buttonClick={() => openDialog("join")} buttonText="Join Chatroom" opener={join_room} label="Enter your room name" inputId="join_room" close={() => joinDialog(false)} submit={() => { joinChatroom(); joinDialog(false); }}></ButtonPopup>
+>>>>>>> Stashed changes
           </div>
           <div className="input_field">
             <textarea id="message_box" className="message_box" rows={5} cols={100} placeholder="Message"></textarea>
